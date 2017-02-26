@@ -1,12 +1,13 @@
-import processing.serial.*;// serial communication
+import processing.serial.*;// serial communication //<>// //<>//
 import controlP5.*;
 import peasy.*;
 
 class Drone
 {
+  String id;
   float []pos;// position
   float []ori;// orientation
-  
+  // might not need the PID constants or variables since Gui holds them now 
   float []PIDtilt; // tilt PID constants
   float []PIDpos; // position PID constants
   boolean PIDTiltChange;// to check wether or not new pid values need to be sent to drone
@@ -15,14 +16,14 @@ class Drone
   
   // drones pop up window 
   boolean popWindow;
-  ControlP5 cp5;
+  boolean selected;
   DropdownList ddl; // dropdown list 
   
-  Drone(float location[], float orientation[], float pidTilt[], float pidPos[], ControlP5 inter)
+  Drone(String _id, float location[], float orientation[], float pidTilt[], float pidPos[])
   {
+    id = _id;
     popWindow = false;
-    cp5 = inter;
-    
+    selected = false;
     pos = new float[3];
     ori = new float[3];
     PIDtilt = new float [3];
@@ -38,7 +39,6 @@ class Drone
       PIDpos[i] = pidPos[i];
     }
     
-    initPopWindow();
     
   }
   void move(float newPos[],float newOri[])
@@ -49,93 +49,35 @@ class Drone
       ori[i] = newOri[i];
     }
   }
-  void mousePressed(int x, int y,PeasyCam cam )
+  
+ void display()
   {
-    println(x + ", " + y + "\t:Drone\t" + pos[0] + "," + pos[1] + "\t:Drone\t" );//+ cam.position[0] + ", " + cam.position[1]); //<>//
-    if((x <= (pos[0]+100) && x >=(pos[0]-100)) && (y <= (pos[1]) && y >= (pos[1]-100)))
+    displayDrone(); 
+  }
+  
+  void mousePressed(int x, int y, PeasyCam cam)
+  {
+    //println(x + ", " + y + "\t:\t" + pos[0] + "," + pos[1]);
+    int x3d = int(screenX(pos[0], pos[1], pos[2]));
+    int y3d = int(screenY(pos[0], pos[1], pos[2]));
+    float vertices3D[] = {0,0,0}; 
+    int vertices2D[] = {0,0,0}; 
+    if((x<= (x3d +100) && x >=(x3d -100)) && (y <= (y3d +100) && y >= (y3d-100)))
     {
       popWindow = !popWindow;
       if(popWindow == true)
       {
-        cp5.show();
-        cam.setRotations(0,0,0);
-        //cam.lookAt(0,0,0);
-        //cam.lookAt(pos[0], pos[1], (pos[2] + 100));
         println("object pressed to show");
       }
       else
       {
+        
         println("object pressed to hide");
-        cp5.hide();
       }
     }
   }
-  void display(PeasyCam cam)
+  void displayDrone()
   {
-    displayDrone(cam);
-    updatePopWindow();
-    //displayPopWindow();
-     //<>//
-  }
-  void updatePopWindow()
-  {
-    //cp5.setPosition(int(pos[0]+50), int(pos[1]));
-    ddl.setPosition(pos[0]+50, pos[1]);
-  }
-  void initPopWindow()
-  {
-    //pushMatrix();
-    //Dropdown for roll/x pitch/y yaw/z
-    ddl = cp5.addDropdownList("axis").setPosition(pos[0]+50, pos[1]-(19*3));
-    ddl.setItemHeight(19)
-       .setBackgroundColor(color(190))
-       .addItem("X / Roll", 0)
-       .addItem("Y / Pitch", 1)
-       .addItem("Z / Yaw", 2)
-       .setColorActive(color(255, 128))
-       .setColorBackground(color(60));
-   
-    // sliders
-    cp5.addSlider("P:orientation")
-        .setRange(0.0, 10.0)
-        .setValue(PIDtilt[0])
-        //.setPosition(pos[0]+50, pos[1]+19)
-        .setSize(100, 19);
-    cp5.addSlider("I:orientation")
-        .setRange(0.0, 10.0)
-        .setValue(PIDtilt[1])
-        //.setPosition(pos[0]+50, pos[1]+(19*2))
-        .setSize(100, 19);
-    cp5.addSlider("D:orientation")
-        .setRange(0.0, 10.0)
-        .setValue(PIDtilt[2])
-        //.setPosition(pos[0]+50, pos[1]+(19*3))
-        .setSize(100, 19);
-    cp5.addSlider("P:position")
-        .setRange(0.0, 10.0)
-        .setValue(PIDtilt[1])
-        //.setPosition(pos[0]+50, pos[1]+(19*4))
-        .setSize(100, 19);
-    cp5.addSlider("I:position")
-        .setRange(0.0, 10.0)
-        .setValue(PIDtilt[2])
-        //.setPosition(pos[0]+50, pos[1]+(19*5))
-        .setSize(100, 19);
-    cp5.addSlider("D:position")
-        .setRange(0.0, 10.0)
-        .setValue(PIDtilt[1])
-        //.setPosition(pos[0]+50, pos[1]+(19*2))
-        .setSize(100, 19);
-    //cp5.setPosition(0,0,0);
-    cp5.hide();
-    //ddl.setPosition(0,0);
-    //popMatrix();
-        
-    
-  }
-  void displayDrone(PeasyCam cam)
-  {
-    
     pushMatrix();
     stroke(0);
     rotateX(0);
@@ -170,6 +112,16 @@ class Drone
     rotateZ(0);
     //popMatrix();
     translate(-pos[0], -pos[1], -800/1000);
+    //show if selected drone
+    if(selected)
+    {
+      translate(pos[0], pos[1], 30); 
+      pushStyle(); 
+      fill(116,244,255); 
+      noStroke(); 
+      sphere(10); 
+      popStyle();
+    }
     popMatrix();
   }
 }

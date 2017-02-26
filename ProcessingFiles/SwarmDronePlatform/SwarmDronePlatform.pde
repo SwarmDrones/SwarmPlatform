@@ -1,22 +1,7 @@
 import processing.serial.*;// serial communication
 import processing.opengl.*;// graphics
 import peasy.*; // camera
-import controlP5.*;
-ControlP5 cp5;
-PeasyCam cam;
-
-
-// arrays hold the vertices of 3d object 
-float vertices3D[] = {0,0,0}; 
-int vertices2D[] = {0,0,0}; 
-
-// index of current mouseover / clicked vertex 
-int vertexMouseOver = -1; 
-int vertexKlicked= -1; 
-
-// z value in model/world space of current vertex 
-float zModelMouseOver; 
-float zModelKlick; 
+PeasyCam cam; //<>//
 
 final int h = 800;
 final int w = 1400;
@@ -25,7 +10,7 @@ float Dloc[] = {200, 200, 0.0};
 float Dori[] = {0.0, 0.0, 0.0};
 float DoriGain[] = {1.0, 1.0, 1.0};
 float DposGain[] = {1.0, 1.0, 1.0};
-
+GUI gui;
 Drone drone;
 DroneManager dm;
 void setup()
@@ -35,12 +20,11 @@ void setup()
   //////////////////////////////////// Serial setup////////////////////////////////
   
   //////////////////////////////////// interface setup////////////////////////////////
-  cp5 = new ControlP5(this);
-  cp5.setPosition(0,0,0);
+  gui = new GUI( this);
   //////////////////////////////////// drone setup////////////////////////////////
-  dm = new DroneManager(3);
-  drone = new Drone(Dloc, Dori, DoriGain, DposGain, cp5);
-  dm.addDrone(drone);
+  //dm = new DroneManager(3, this);
+  drone = new Drone("drone", Dloc, Dori, DoriGain, DposGain);
+  //dm.addDrone(drone);
   //////////////////////////////////// Camera setup////////////////////////////////
   cam = new PeasyCam(this,0, 0, 0,1000);
   cam.setMinimumDistance(20);
@@ -53,33 +37,47 @@ void setup()
 }
 void draw()
 {
-  for(int i = 0; i < 3; i++)
-  {
-     vertices3D[i] = drone.pos[0]; 
-  }
-  
   background(255,255,255);
-  drone.display(cam);
+  drone.display();
   if(drone.popWindow == true)
   {
-    cam.setRollRotationMode(); //<>//
+    cam.setRollRotationMode();
     //cam.setRotations(0,0,0);
   }
   else
   {
     cam.setFreeRotationMode();
   }
-  hitDetect();
+  float pos[] = {drone.pos[0],drone.pos[1], drone.pos[2]};
+  gui.draw(drone.popWindow, pos);
+  //hitDetect();
   
 }
 
 void mousePressed()
 {
-  cam.beginHUD();
+  //droneManager.mousePressed(mouseX, mouseY);
+  //gui.mousePressed(mouseX, mouseY, cam);
+ 
+  int x3d = int(screenX(drone.pos[0], drone.pos[1], drone.pos[2]));
+  int y3d = int(screenY(drone.pos[0], drone.pos[1], drone.pos[2]));
+  if((mouseX<= (x3d +100) && mouseX >=(x3d -100)) && (mouseY <= (y3d +100) && mouseY >= (y3d-100)))
+  {
+    drone.selected = true;
+  }
   drone.mousePressed(mouseX, mouseY, cam);
-  cam.endHUD();
+  
 }
 
+void controlEvent(ControlEvent theEvent) 
+{
+  gui.controlEvent(theEvent);
+}
+ 
+
+  
+
+/*
 void hitDetect() { 
   // mouse hit detection using screnX, screenY 
   
@@ -94,7 +92,7 @@ void hitDetect() {
     
     if (x > mouseX-100 && x < mouseX+100 && y > mouseY-100 && y < mouseY+100) { 
        //vertexMouseOver = i; 
-       println("mouse over this");
+       //println("mouse over this");
         pushMatrix(); 
         translate(vertices3D[0], vertices3D[1], 30); 
         pushStyle(); 
@@ -105,4 +103,4 @@ void hitDetect() {
         popMatrix(); 
     } 
    
-}
+}*/
