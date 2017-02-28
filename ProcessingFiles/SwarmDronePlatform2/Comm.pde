@@ -13,8 +13,11 @@ class Comm
   Comm(PApplet parent)
   {
       // setting up the serial port
-      println(Serial.list()[1]);
-      String portName = Serial.list()[1]; //change the 0 to a 1 or 2 etc. to match your port
+      for(int i = 0; i < Serial.list().length; i++)
+      {
+        println(Serial.list()[i]);
+      }
+      String portName = Serial.list()[8]; //change the 0 to a 1 or 2 etc. to match your port
       myPort = new Serial(parent, portName, 115200);
       msgInFlag = false;
       mIn = "";
@@ -48,6 +51,7 @@ class Comm
             {
                 mIn = rx_headerInter(mIn, mIn.length());
                 msgInFlag = true;
+                print("incoming message: ");
                 println(mIn);
             }
         }
@@ -135,11 +139,16 @@ class Comm
 
   private String rx_headerInter(String rx_message, int sizet)
   {
-              
+      println("incoming: "+rx_message);
+      for(int i = 0; i< rx_message.length(); i++)
+      {
+        print(hex(byte(rx_message.charAt(i))));
+        print(" ");
+      }
+      println("");
           
-          
-      final int dataLen = sizet - 16;// length of data in message
-      final int addLen = 10; // length of address
+      final int dataLen = sizet - 13;// length of data in message
+      final int addLen = 5; // length of address
       //int totalLen = (dataLen + addLen +1);
   
       String out = "";
@@ -157,12 +166,15 @@ class Comm
       
       out += ':';   //out[addLen] = ':';
       // parsing the data portion of the header
-      for(int i = 0; i < dataLen; i++)
+      String data = ""; 
+      for(int i = 0; i < dataLen-1; i++)
       {
-              out+= rx_message.charAt(i+15);//out[i + addLen] = rx_message[i+16];
+              out+= rx_message.charAt(i+10);//out[i + addLen] = rx_message[i+16];
+              data += rx_message.charAt(i+10);
       }
+      println("data In: " + data);
       //int total = dataLen + addLen;
-      println(out);
+      //println(out);
       return out;
       
   }
@@ -183,7 +195,13 @@ class Comm
      data += ":";
      data += value;
      byte header[] = tx_headerGen(droneId, data, data.length());
-     print(header);
+     print(droneId + ": ");
+     for(int i = 0; i < header.length; i++)
+     {
+       print(hex(header[i]));
+       print(" ");
+     }
+     println("");
      // @todo: somehow send it to serial here.
      
    }

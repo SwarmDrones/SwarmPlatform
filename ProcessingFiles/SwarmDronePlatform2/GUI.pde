@@ -64,9 +64,6 @@ class GUI
     {
       cp.show();
       cam.setRotations(0,0,0);
-      //cam.lookAt(loc[0], loc[1], 100);   //cam.lookAt(0,0,0);
-      //cam.lookAt(pos[0], pos[1], (pos[2] + 100));
-      //println("object pressed to show");
     }
     else
     {
@@ -248,7 +245,7 @@ class GUI
   
   String getCommStuff()
   {
-    valChanged = false;
+    this.valChanged = false;
     return forComm;
   }
 }

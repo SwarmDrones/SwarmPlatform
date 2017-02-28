@@ -12,8 +12,8 @@ class DroneManager
     filled = 0;
     capacity = cap;
     parent = _parent;
-    drones = new Drone[3];
-    dGUI = new GUI[3];
+    drones = new Drone[cap];
+    dGUI = new GUI[cap];
     comm = new Comm(parent);
   }
   void addDrone(Drone d)
@@ -31,17 +31,23 @@ class DroneManager
     // see if any drones needs new PID values
     for(int i = 0; i < filled; i++)
     {
-      if(dGUI[i].valChanged)
+      if(dGUI[i].valChanged == true)
       {
         String out = dGUI[i].getCommStuff();
         comm.output2Drone(drones[i].id, "PID", out);
       }
     }
     
+    comm.updateRXMsg();
     // see if any new drone orientation and position values came in.
     if(comm.msgInFlag == true)
     {
       String header = comm.getMsgIn();
+      print("incoming: ");
+      for(int i = 0; i < header.length(); i++)
+      {
+        print(hex(header.charAt(i)));
+      }
       String droneId = header.substring(0, 8);
       int subIdx = 0;
       for(int i = 8; i < header.length(); i++)
@@ -55,7 +61,7 @@ class DroneManager
       String subject = header.substring(8, subIdx);
       subIdx++;
       String values = header.substring(subIdx);
-      
+      String []vals = split(values, ' ');
       // check if a new drone needs to be added
       boolean check = false;
       for(int i = 0; i < filled; i++)
@@ -67,13 +73,16 @@ class DroneManager
       }
       if(!check)
       {
-         // add a new drone 
+         // add a new drone
+         float []zeros = {0.00, 0.00, 0.00};
+         Drone dtemp = new Drone(droneId, zeros, zeros, zeros, zeros);
+         addDrone(dtemp);
       }
       
       // change the values for the drone according to incoming message.
       if(subject == "Orientation")
       {
-        int droneIdx = 0;
+        int droneIdx = -1;
         for(int i = 0; i < filled; i++)
         {
           if(drones[i].id == droneId)
@@ -83,13 +92,24 @@ class DroneManager
         }
         for(int i = 0; i < 3; i++)
         {
-          // TODO: parse the values by spaces so that value can be places.
-          drones[droneIdx].ori[i] = 0.00;
+          drones[droneIdx].ori[i] = float(vals[i]); 
         }
         
       }
       else if(subject == "Location")
       {
+        int droneIdx = -1;
+        for(int i = 0; i < filled; i++)
+        {
+          if(drones[i].id == droneId)
+          {
+             droneIdx = i; 
+          }
+        }
+        for(int i = 0; i < 3; i++)
+        {
+          drones[droneIdx].pos[i] = float(vals[i]); 
+        }
         
       }
     }
