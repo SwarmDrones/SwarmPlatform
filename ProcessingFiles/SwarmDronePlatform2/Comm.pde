@@ -63,25 +63,25 @@ class Comm
     */
     private boolean verifyIncoming(String header)
     {
-        
-        
         byte sum = byte(0x00);
         byte checking[] = new byte[header.length()-3];
         for(int i = 0; i < (header.length()-3); i++)
         {
                 checking[i] = (byte)header.charAt(i+2);
         }
-        sum = chksum8(checking, header.length()-3);
-        byte checksum = byte(0xFF - sum);
-        if(header.charAt(header.length()-1)== (checksum))
+        sum = byte(chksum8(checking, header.length()-3));
+        byte checksum = byte(0xff - sum);
+        byte headerSum = byte(header.charAt(header.length()-1));
+        if(headerSum == byte(checksum))
         {
             return true;
             //Serial.println("true message");
         }
         else 
         {
+          
             msgInFlag = false;
-            println("false message");
+            println("false message, "+ hex(headerSum) + " : " + hex(checksum));
             return false;
         }
     }
@@ -128,7 +128,7 @@ class Comm
             checking[i-3] = header[i];
       }
       sum = chksum8(checking, 14 + sizet);
-      byte checksum = (byte)(0xFF-sum);
+      byte checksum = (byte)(0xff - sum);
       header[17+sizet]= (checksum);
             
       return header;        
@@ -148,7 +148,7 @@ class Comm
       println("");
           
       final int dataLen = sizet - 13;// length of data in message
-      final int addLen = 5; // length of address
+      final int addLen = 8; // length of address
       //int totalLen = (dataLen + addLen +1);
   
       String out = "";
@@ -157,7 +157,7 @@ class Comm
       
       for(int i = 0; i < addLen; i++)
       {
-              out+= rx_message.charAt(i+4);
+              out+= rx_message.charAt(i+2);
       }
       
       print("out address: ");
@@ -167,9 +167,9 @@ class Comm
       out += ':';   //out[addLen] = ':';
       // parsing the data portion of the header
       String data = ""; 
-      for(int i = 0; i < dataLen-1; i++)
+      for(int i = 0; i < dataLen; i++)
       {
-              out+= rx_message.charAt(i+10);//out[i + addLen] = rx_message[i+16];
+              out += rx_message.charAt(i+10);//out[i + addLen] = rx_message[i+16];
               data += rx_message.charAt(i+10);
       }
       println("data In: " + data);
