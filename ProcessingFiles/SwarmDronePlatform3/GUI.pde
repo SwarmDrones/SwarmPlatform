@@ -104,34 +104,34 @@ class GUI
        .setColorActive(color(255, 128))
        .setColorBackground(color(60));
          
-    cp.addSlider("P:orientation")
+    cp.addSlider("P:ori")
        .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
        .setValue(10.0)
        .setPosition(130,10)
        .setSize(100, 20);
        
-    cp.addSlider("I:orientation")
+    cp.addSlider("I:ori")
       .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
       .setValue(10.0)
       .setPosition(250, 10)
       .setSize(100, 20);
       
-    cp.addSlider("D:orientation")
+    cp.addSlider("D:ori")
         .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
         .setValue(10.0)
         .setPosition(370,10)
         .setSize(100, 20);
-    cp.addSlider("P:position")
+    cp.addSlider("P:pos")
         .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
         .setValue(10.0)
         .setPosition(130, 40)
         .setSize(100, 19);
-    cp.addSlider("I:position")
+    cp.addSlider("I:pos")
         .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
         .setValue(10.0)
         .setPosition(250, 40)
         .setSize(100, 19);
-    cp.addSlider("D:position")
+    cp.addSlider("D:pos")
         .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
         .setValue(10.0)
         .setPosition(370, 40)
@@ -141,29 +141,29 @@ class GUI
         .setPosition(500, 10)
         .setSize(80,50);
         
-    cp.getController("P:orientation").setCaptionLabel("P :orientation");
-    cp.getController("P:orientation").getCaptionLabel().setSize(10);
-    cp.getController("P:orientation").getCaptionLabel().getStyle().setMarginLeft(-70);
+    cp.getController("P:ori").setCaptionLabel("P :orientation");
+    cp.getController("P:ori").getCaptionLabel().setSize(10);
+    cp.getController("P:ori").getCaptionLabel().getStyle().setMarginLeft(-70);
     
-    cp.getController("I:orientation").setCaptionLabel("I :orientation");
-    cp.getController("I:orientation").getCaptionLabel().setSize(10);
-    cp.getController("I:orientation").getCaptionLabel().getStyle().setMarginLeft(-70);
+    cp.getController("I:ori").setCaptionLabel("I :orientation");
+    cp.getController("I:ori").getCaptionLabel().setSize(10);
+    cp.getController("I:ori").getCaptionLabel().getStyle().setMarginLeft(-70);
     
-    cp.getController("D:orientation").setCaptionLabel("D :orientation");
-    cp.getController("D:orientation").getCaptionLabel().setSize(10);
-    cp.getController("D:orientation").getCaptionLabel().getStyle().setMarginLeft(-70);
+    cp.getController("D:ori").setCaptionLabel("D :orientation");
+    cp.getController("D:ori").getCaptionLabel().setSize(10);
+    cp.getController("D:ori").getCaptionLabel().getStyle().setMarginLeft(-70);
     
-    cp.getController("P:position").setCaptionLabel("P :position");
-    cp.getController("P:position").getCaptionLabel().setSize(10);
-    cp.getController("P:position").getCaptionLabel().getStyle().setMarginLeft(-70);
+    cp.getController("P:pos").setCaptionLabel("P :position");
+    cp.getController("P:pos").getCaptionLabel().setSize(10);
+    cp.getController("P:pos").getCaptionLabel().getStyle().setMarginLeft(-70);
     
-    cp.getController("I:position").setCaptionLabel("I :position");
-    cp.getController("I:position").getCaptionLabel().setSize(10);
-    cp.getController("I:position").getCaptionLabel().getStyle().setMarginLeft(-70);
+    cp.getController("I:pos").setCaptionLabel("I :position");
+    cp.getController("I:pos").getCaptionLabel().setSize(10);
+    cp.getController("I:pos").getCaptionLabel().getStyle().setMarginLeft(-70);
     
-    cp.getController("D:position").setCaptionLabel("D :position");
-    cp.getController("D:position").getCaptionLabel().setSize(10);
-    cp.getController("D:position").getCaptionLabel().getStyle().setMarginLeft(-70);
+    cp.getController("D:pos").setCaptionLabel("D :position");
+    cp.getController("D:pos").getCaptionLabel().setSize(10);
+    cp.getController("D:pos").getCaptionLabel().getStyle().setMarginLeft(-70);
     
        
   }
@@ -182,7 +182,7 @@ class GUI
         selectedAxis = int(theEvent.controller().getValue());
          
       }
-      else if(selectedName == "P:orientation")
+      else if(selectedName == "P:ori")
       {
         pidTilt[selectedAxis][0] = theEvent.controller().getValue();
         valChanged = true;
@@ -191,7 +191,7 @@ class GUI
         forComm += ":";
         forComm += pidTilt[selectedAxis][1];
       }
-      else if(selectedName == "I:orientation")
+      else if(selectedName == "I:ori")
       {
         pidTilt[selectedAxis][1] = theEvent.controller().getValue();
         valChanged = true;
@@ -200,7 +200,7 @@ class GUI
         forComm += ":";
         forComm += pidTilt[selectedAxis][2];
       }
-      else if(selectedName == "D:orientation")
+      else if(selectedName == "D:ori")
       {
         pidTilt[selectedAxis][2] = theEvent.controller().getValue();
         valChanged = true;
@@ -209,7 +209,7 @@ class GUI
         forComm += ":";
         forComm += pidTilt[selectedAxis][2];
       }
-      else if(selectedName == "P:position")
+      else if(selectedName == "P:pos")
       {
         pidPos[selectedAxis][0] = theEvent.controller().getValue();
         valChanged = true;
@@ -218,7 +218,7 @@ class GUI
         forComm += ":";
         forComm += pidPos[selectedAxis][0];
       }
-      else if(selectedName == "I:position")
+      else if(selectedName == "I:pos")
       {
         pidPos[selectedAxis][1] = theEvent.controller().getValue();
         valChanged = true;
@@ -227,7 +227,7 @@ class GUI
         forComm += ":";
         forComm += pidPos[selectedAxis][1];
       }
-      else if(selectedName == "D:position")
+      else if(selectedName == "D:pos")
       {
         pidPos[selectedAxis][2] = theEvent.controller().getValue();
         valChanged = true;
