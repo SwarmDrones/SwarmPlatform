@@ -20,11 +20,11 @@ void setup()
   size(1400, 800,OPENGL);
   frameRate(60);
   //////////////////////////////////// drone setup////////////////////////////////
-  dm = new DroneManager(3, this); //<>//
-  drone1 = new Drone("drone111", Dloc, Dori, DoriGain, DposGain);
-  drone2 = new Drone("drone222", Dloc2, Dori, DoriGain, DposGain);
-  dm.addDrone(drone1); //<>//
-  dm.addDrone(drone2);
+  dm = new DroneManager(3, this);
+  //drone1 = new Drone("drone111", Dloc, Dori, DoriGain, DposGain);
+  //drone2 = new Drone("drone222", Dloc2, Dori, DoriGain, DposGain);
+  //dm.addDrone(drone1);
+  //dm.addDrone(drone2);
   //////////////////////////////////// Camera setup////////////////////////////////
   cam = new PeasyCam(this,0, 0, 0,1000);
   cam.setMinimumDistance(20);

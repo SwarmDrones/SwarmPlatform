@@ -34,7 +34,7 @@ class DroneManager
     for(int i = 0; i < filled; i++)
     {
       
-      if(dGUI[i].valChanged == true) //<>//
+      if(dGUI[i].valChanged == true)
       {
         println("checked gui:" + i);
         String out = dGUI[i].getCommStuff();
@@ -42,19 +42,21 @@ class DroneManager
       }
     }
     
-    comm.updateRXMsg();
+    comm.updateRXMsg(); //<>//
     // see if any new drone orientation and position values came in.
     if(comm.msgInFlag == true)
     {
+      final int addSize = 4;
       String header = comm.getMsgIn();
       print("incoming: ");
-      for(int i = 0; i < header.length(); i++)
+      print(header + " : ");
+      /*for(int i = 0; i < header.length(); i++)
       {
         print(hex(header.charAt(i)));
-      }
-      String droneId = header.substring(0, 8);
+      }*/
+      String droneId = header.substring(0, addSize);
       int subIdx = 0;
-      for(int i = 8; i < header.length(); i++)
+      for(int i = addSize; i < header.length(); i++)
       {
         if(header.charAt(i) == ':')
         {
@@ -62,7 +64,7 @@ class DroneManager
           break;
         }
       }
-      String subject = header.substring(8, subIdx);
+      String subject = header.substring(addSize, subIdx); //<>//
       subIdx++;
       String values = header.substring(subIdx);
       String []vals = split(values, ' ');

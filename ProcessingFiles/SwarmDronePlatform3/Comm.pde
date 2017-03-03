@@ -17,7 +17,7 @@ class Comm
       {
         println(Serial.list()[i]);
       }
-      String portName = Serial.list()[8]; //change the 0 to a 1 or 2 etc. to match your port
+      String portName = Serial.list()[3]; //change the 0 to a 1 or 2 etc. to match your port
       myPort = new Serial(parent, portName, 115200);
       msgInFlag = false;
       mIn = "";

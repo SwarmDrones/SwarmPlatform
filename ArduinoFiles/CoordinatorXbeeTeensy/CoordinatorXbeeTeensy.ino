@@ -24,6 +24,8 @@ void setup()
 
 void loop()
 {
+  //Serial1.flush();
+  //Serial.flush();
   mInX = "";// messages comm
   mOutX = "";
 
@@ -58,15 +60,16 @@ void loop()
   {
     txP = false;
     mOutP = mInX;// comm.incoming2Processing(mInX);
-    Serial.println(mOutP);
-    /*char buf[mOutP.length()];
+    /*Serial.println(mOutP);
+    char buf[mOutP.length()];
     mOutP.toCharArray(buf, mOutP.length());//getBytes(buf, sizet);
     Serial.print("incoming RX:");
     for(int i = 0; i < mOutP.length(); i++)
     {
         Serial.print(buf[i], HEX);
         Serial.print(" ");
-    }*/
+    }
+    Serial.println("");*/
   }
   // check if recieved from processing 
   if(rxP)
@@ -79,6 +82,7 @@ void loop()
   {
     txX = false;
     mOutX = mInP;
+    
     comm.transmit2Drone(mOutX);
     
   }
