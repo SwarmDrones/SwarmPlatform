@@ -42,17 +42,14 @@ void loop()
   comm.updateRXMsg();
   if(comm.checkInFlag())
   {
-    
-      mInX = comm.getMessage();
-      
+      mInX = comm.getMessage();   
       rxX = true;
-    
-  }
+  }                                                       
 
   // check if recieved from xbee
   if(rxX)
   {
-    txP = true;
+    txP = true;        
     rxX = false;
   }
   // send out to processing if messaged recieved from xbee
@@ -60,8 +57,8 @@ void loop()
   {
     txP = false;
     mOutP = mInX;// comm.incoming2Processing(mInX);
-    /*Serial.println(mOutP);
-    char buf[mOutP.length()];
+    Serial.println(mOutP);
+    /*char buf[mOutP.length()];
     mOutP.toCharArray(buf, mOutP.length());//getBytes(buf, sizet);
     Serial.print("incoming RX:");
     for(int i = 0; i < mOutP.length(); i++)

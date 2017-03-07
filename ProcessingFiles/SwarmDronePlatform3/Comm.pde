@@ -53,10 +53,12 @@ class Comm
  
  void output2Drone(String droneId, String subject, String value)
  {
-   String data = droneId;
-   data += subject;
-   data += ":";
+   //String data = droneId;
+   //data += subject;
+   String data = subject;
+   //data += ":";
    data += value;
+   //println("output to drone:"+data);
    myPort.write(data);
  }
 }

@@ -46,17 +46,26 @@ class DroneManager
     // see if any new drone orientation and position values came in.
     if(comm.msgInFlag == true)
     {
-      final int addSize = 4;
+      final int addSize = 5;
       String header = comm.getMsgIn();
-      print("incoming: ");
-      print(header + " : ");
-      /*for(int i = 0; i < header.length(); i++)
+      println("incoming: " + header);
+      
+      // getting the drone id
+      int droneIdIdx = 0;
+      for(int i = 0; i < header.length(); i++)
       {
-        print(hex(header.charAt(i)));
-      }*/
-      String droneId = header.substring(0, addSize);
+        if(header.charAt(i) == ':')
+        {
+          droneIdIdx = i;
+          break;
+        }
+      }
+      String droneId = header.substring(0, droneIdIdx);
+      println("drone id is: " + droneId);
+      
+      // getting the subject of message
       int subIdx = 0;
-      for(int i = addSize; i < header.length(); i++)
+      for(int i = droneIdIdx+1; i < header.length(); i++)
       {
         if(header.charAt(i) == ':')
         {
@@ -64,16 +73,22 @@ class DroneManager
           break;
         }
       }
-      String subject = header.substring(addSize, subIdx); //<>//
+      String subject = header.substring(droneIdIdx+2, subIdx); //<>//
+      println("subject is: " + subject);
       subIdx++;
+      // gettingt the values
       String values = header.substring(subIdx);
+      println("values are: " + values);
       String []vals = split(values, ' ');
       // check if a new drone needs to be added
       boolean check = false;
       for(int i = 0; i < filled; i++)
       {
-        if(drones[i].id == droneId)
+        //println("checking if drone exist:" + drones[i].id + "==" + droneId);
+        String edId = drones[i].id;
+        if(edId.equals(droneId) == true)
         {
+          //println("checks out fine");
           check = true;
         }
       }
@@ -86,12 +101,14 @@ class DroneManager
       }
       
       // change the values for the drone according to incoming message.
-      if(subject == "Orientation")
+      if(subject.equals("Orientation") == true)
       {
+        println("recieved " + subject);
         int droneIdx = -1;
         for(int i = 0; i < filled; i++)
         {
-          if(drones[i].id == droneId)
+          String edId = drones[i].id;
+          if(edId.equals(droneId) == true)
           {
              droneIdx = i; 
           }
@@ -102,12 +119,14 @@ class DroneManager
         }
         
       }
-      else if(subject == "Location")
+      else if(subject.equals("Location") == true)
       {
+        println("recieved " + subject);
         int droneIdx = -1;
         for(int i = 0; i < filled; i++)
         {
-          if(drones[i].id == droneId)
+          String edId = drones[i].id;
+          if(edId.equals(droneId) == true)
           {
              droneIdx = i; 
           }
