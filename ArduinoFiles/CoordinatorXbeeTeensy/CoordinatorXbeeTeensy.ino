@@ -27,10 +27,14 @@ void loop()
   //Serial1.flush();
   //Serial.flush();
   mInX = "";// messages comm
+  mInX.trim();
   mOutX = "";
+  mOutX.trim();
 
   mInP = ""; 
+  mInP.trim();
   mOutP = "";
+  mOutP.trim();
   ////////////////////////////////// XBEE COMMUNICATION PORTION //////////////////////////////
   // recieve messages from Processing
   while(Serial.available())

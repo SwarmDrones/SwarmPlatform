@@ -133,7 +133,7 @@ class DroneManager
         }
         for(int i = 0; i < 3; i++)
         {
-          drones[droneIdx].pos[i] = float(vals[i]); 
+          drones[droneIdx].pos[i] = float(vals[i])/10; 
         }
         
       }

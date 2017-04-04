@@ -9,12 +9,14 @@ class GUI
   ControlP5 cp;
   int nDrones;
   String selectedName;
-  int selectedAxis;
+  float throttle;
+  float[] throttleMinMax; 
   
+  int selectedAxis;
   float[][] pidTilt;
   float[][] pidPos;
-  float[] pidTiltMinMax;
-  float[] pidPosMinMax;
+  float[][] pidTiltMinMax;
+  float[][] pidPosMinMax;
   float[] loc;
   float[] ori;
   final int numAxis = 3;
@@ -27,12 +29,24 @@ class GUI
   {
     this.popWindow = false;
     this.valChanged = false; //<>//
+    this.throttle = 20.0;
+    this.throttleMinMax = new float[2];
+    this.throttleMinMax[0] = 0.00;
+    this.throttleMinMax[1] = 60.00;
+    
     this.pidTilt = new float[numAxis][numConsts];
     this.pidPos = new float[numAxis][numConsts];
-    this.pidTiltMinMax = new float[2];
-    this.pidPosMinMax = new float[2];
-    this.pidTiltMinMax[0] = 0.0; pidTiltMinMax[1] = 100.0;
-    this.pidPosMinMax[0] = 0.0; pidPosMinMax[1] = 100.0;
+    this.pidTiltMinMax = new float[2][numConsts];
+    this.pidPosMinMax = new float[2][numConsts];
+    //P
+    this.pidTiltMinMax[0][0] = 0.0; pidTiltMinMax[1][0] = 40.0;
+    this.pidPosMinMax[0][0] = 0.0; pidPosMinMax[1][0] = 10.0;
+    //I
+    this.pidTiltMinMax[0][1] = 0.0; pidTiltMinMax[1][1] = 1.0;
+    this.pidPosMinMax[0][1] = 0.0; pidPosMinMax[1][1] = 10.0;
+    //D
+    this.pidTiltMinMax[0][2] = 0.0; pidTiltMinMax[1][2] = 10.0;
+    this.pidPosMinMax[0][2] = 0.0; pidPosMinMax[1][2] = 10.0;
     
     this.loc = new float[3];
     this.ori = new float[3];
@@ -105,37 +119,42 @@ class GUI
        .setColorBackground(color(60));
          
     cp.addSlider("P:ori")
-       .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
-       .setValue(10.0)
+       .setRange(pidTiltMinMax[0][0], pidTiltMinMax[1][0])
+       .setValue(0.0)
        .setPosition(130,10)
        .setSize(100, 20);
        
     cp.addSlider("I:ori")
-      .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
-      .setValue(10.0)
+      .setRange(pidTiltMinMax[0][1], pidTiltMinMax[1][1])
+      .setValue(0.0)
       .setPosition(250, 10)
       .setSize(100, 20);
       
     cp.addSlider("D:ori")
-        .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
-        .setValue(10.0)
+        .setRange(pidTiltMinMax[0][2], pidTiltMinMax[1][2])
+        .setValue(0.0)
         .setPosition(370,10)
         .setSize(100, 20);
     cp.addSlider("P:pos")
-        .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
-        .setValue(10.0)
+        .setRange(pidTiltMinMax[0][0], pidTiltMinMax[1][0])
+        .setValue(0.0)
         .setPosition(130, 40)
         .setSize(100, 19);
     cp.addSlider("I:pos")
-        .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
-        .setValue(10.0)
+        .setRange(pidTiltMinMax[0][1], pidTiltMinMax[1][1])
+        .setValue(0.0)
         .setPosition(250, 40)
         .setSize(100, 19);
     cp.addSlider("D:pos")
-        .setRange(pidTiltMinMax[0], pidTiltMinMax[1])
-        .setValue(10.0)
+        .setRange(pidTiltMinMax[0][2], pidTiltMinMax[1][2])
+        .setValue(0.0)
         .setPosition(370, 40)
         .setSize(100, 19);
+    cp.addSlider("Throttle")
+        .setRange(throttleMinMax[0], throttleMinMax[1])
+        .setValue(0.0)
+        .setPosition(130, 70)
+        .setSize(100, 19);   
     
     cp.addButton("Set Destination")
         .setPosition(500, 10)
@@ -165,6 +184,10 @@ class GUI
     cp.getController("D:pos").getCaptionLabel().setSize(10);
     cp.getController("D:pos").getCaptionLabel().getStyle().setMarginLeft(-70);
     
+    cp.getController("Throttle").setCaptionLabel("Throttle");
+    cp.getController("Throttle").getCaptionLabel().setSize(10);
+    cp.getController("Throttle").getCaptionLabel().getStyle().setMarginLeft(-70);
+    
        
   }
   void controlEvent(ControlEvent theEvent) 
@@ -189,7 +212,7 @@ class GUI
         forComm = str(selectedAxis);
         forComm += selectedName;
         forComm += ":";
-        forComm += pidTilt[selectedAxis][1];
+        forComm += pidTilt[selectedAxis][0];
       }
       else if(selectedName == "I:ori")
       {
@@ -198,7 +221,7 @@ class GUI
         forComm = str(selectedAxis);
         forComm += selectedName;
         forComm += ":";
-        forComm += pidTilt[selectedAxis][2];
+        forComm += pidTilt[selectedAxis][1];
       }
       else if(selectedName == "D:ori")
       {
@@ -235,6 +258,14 @@ class GUI
         forComm += selectedName;
         forComm += ":";
         forComm += pidPos[selectedAxis][2];
+      }
+      else if(selectedName == "Throttle")
+      {
+        throttle = theEvent.controller().getValue();
+        valChanged = true;
+        forComm += selectedName;
+        forComm += ":";
+        forComm += throttle;
       }
       else if(selectedName == "Set Destination")
       {

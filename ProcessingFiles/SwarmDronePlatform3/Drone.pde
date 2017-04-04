@@ -84,17 +84,17 @@ class Drone
     box(20);
     // make the other parts 45 degress from 0
     rotateZ(radians(45));
-    fill(255,0,0);
+    fill(255, 0, 0);
     box(5,5,100);    
     sphere(10);
-    fill(0,255,0);
+    fill(0, 0, 255);
     box(100,10,10);
     
     // propellers
     ellipse(50, 0, 30, 30);
     ellipse(-50, 0, 30, 30);
     sphere(10);
-    fill(0,0,255);
+    fill(0, 255, 0);
     box(10,100,10);
     ellipse(0, 50, 30, 30);
     ellipse(0, -50, 30, 30);

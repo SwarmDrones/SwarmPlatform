@@ -8,7 +8,7 @@
 #include <PX4.h>
 
 //////////////////////////////////////////Time related/////////////////////////////////////
-double cTime, pTime, dTime; // current, previous, and delta time
+double cTime = 0.00, pTime = 0.00, dTime = 0.00,iTime = 0.00;// current, previous, and delta time
 
 ///////////////////////////////////////motors stuff///////////////////////////////////////
 DroneMotor m1(5, 16, 21);  // back left
@@ -77,10 +77,10 @@ void check4Outgoing();
 void setup() {
   comm.init();
   //Serial.println("Communication setup finished");
-  m1.setupMotor();
+  /*m1.setupMotor();
   m2.setupMotor();
   m3.setupMotor();
-  m4.setupMotor();
+  m4.setupMotor();*/
   mspeed = 0.00;
   //Serial.println("Motor setup finished");
   pidSetup();
@@ -114,18 +114,22 @@ void loop() {
   pTime = cTime;
   cTime = millis();
   dTime = cTime-pTime;
+  iTime += dTime;
   /////////////////////////////////////////////IMU/////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////
   updateIMU();
+  /////////////////////////////////////////////PX4/////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
+  updatePX4();
   /////////////////////////////////////////////PID/////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////
   updatePID();
   /////////////////////////////////////////////MOTORS/////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////
-  m1.setSpeed(mspeed - msPitch - msRoll);
+  /*m1.setSpeed(mspeed - msPitch - msRoll);
   m2.setSpeed(mspeed + msPitch - msRoll);
   m3.setSpeed(mspeed - msPitch + msRoll);
-  m4.setSpeed(mspeed + msPitch + msRoll);
+  m4.setSpeed(mspeed + msPitch + msRoll);*/
   //m1.setSpeed(mspeed-msRoll);
   //m2.setSpeed(mspeed-msRoll);
   //m3.setSpeed(mspeed+msRoll);
@@ -260,6 +264,7 @@ void check4Incoming()
   comm.updateRXMsg();
   if(comm.checkInFlag() == true)
   {
+      String str;
       //Serial.println("incoming message is true");
       // checking if orientation or position PID
       if(comm.OriMsgIn == true)
@@ -271,19 +276,22 @@ void check4Incoming()
           if(comm.PMsgIn == true)
           {
             //Set P value
-            String str = comm.getPIDMsgVal();
+            
+            str = comm.getPIDMsgVal();
             aKpRoll = str.toFloat();
+            Serial.print("set roll ori P value: ");
+            Serial.println(str);
           }
           else if(comm.IMsgIn == true)
           {
             //Set I value
-            String str = comm.getPIDMsgVal();
+            str = comm.getPIDMsgVal();
             aKiRoll = str.toFloat();
           }
           else if(comm.DMsgIn == true)
           {
             //Set D value
-            String str = comm.getPIDMsgVal();
+            str = comm.getPIDMsgVal();
             aKdRoll = str.toFloat();
           }
           // update the orientation PID vals
@@ -296,19 +304,21 @@ void check4Incoming()
           if(comm.PMsgIn == true)
           {
             //Set P value
-            String str = comm.getPIDMsgVal();
+            str = comm.getPIDMsgVal();
             aKpPitch = str.toFloat();
           }
           else if(comm.IMsgIn == true)
           {
             //Set I value
-            String str = comm.getPIDMsgVal();
+            str = comm.getPIDMsgVal();
             aKiPitch = str.toFloat();
+            Serial.print("set Pitch ori I value: ");
+            Serial.println(str);
           }
           else if(comm.DMsgIn == true)
           {
             //Set D value
-            String str = comm.getPIDMsgVal();
+            str = comm.getPIDMsgVal();
             aKdPitch = str.toFloat();
           }
           // update the orientation PID vals
@@ -320,20 +330,22 @@ void check4Incoming()
           if(comm.PMsgIn == true)
           {
             //Set P value
-            String str = comm.getPIDMsgVal();
+            str = comm.getPIDMsgVal();
             aKpYaw = str.toFloat();
           }
           else if(comm.IMsgIn == true)
           {
             //Set I value
-            String str = comm.getPIDMsgVal();
+            str = comm.getPIDMsgVal();
             aKiYaw = str.toFloat();
           }
           else if(comm.DMsgIn == true)
           {
             //Set D value
-            String str = comm.getPIDMsgVal();
+            str = comm.getPIDMsgVal();
             aKdYaw = str.toFloat();
+            Serial.print("set Yaw ori D value: ");
+            Serial.println(str);
           }
           // update the orientation PID vals
           yPID.SetTunings(aKpYaw, aKiYaw, aKdYaw);
@@ -343,7 +355,7 @@ void check4Incoming()
       //Serial.println("checked for ori input");
       if(comm.PosMsgIn == true)
       {
-        //Serial.println("orientation PID value in");
+        Serial.println("pos PID value in");
         comm.resetFlags();
       }
       //Serial.println("checked for Pos input");
@@ -358,12 +370,16 @@ void check4Incoming()
 }
 void check4Outgoing()
 {
-
   //TODO: OUTPUT ORIENTATION AND POSITION MESSAGES OUT TO COORDINATE
-  //Serial.println("output Orientation");
-  comm.sendOrientation(actualRoll, actualPitch, actualYaw);
-  comm.sendLocation(px, py, ground_distance,px4.quality_integral());
-  //comm.transmit2Coor("hello");
+  if(iTime>1)
+  {
+    iTime = 0.00;
+    Serial.println("output Orientation");
+    comm.sendOrientation(actualRoll, actualPitch, actualYaw);
+    Serial.println("output Location");
+    comm.sendLocation(px, py, ground_distance,px4.quality_integral());
+    //comm.transmit2Coor("hello");
+  }
 }
 
 
